@@ -146,6 +146,7 @@ rm tests/ui/consts/const-mut-refs-crate.rs # same
 rm tests/ui/abi/large-byval-align.rs # exceeds implementation limit of Cranelift
 rm -r tests/run-make/short-ice # ICE backtrace begin/end marker mismatch
 rm -r tests/run-make/naked-dead-code-elimination # function not eliminated
+rm tests/ui/codegen/huge-stacks.rs # Cranelift doesn't allow stack frames to exceed 4GB
 
 # doesn't work due to the way the rustc test suite is invoked.
 # should work when using ./x.py test the way it is intended
