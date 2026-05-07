@@ -322,23 +322,22 @@ pub(crate) fn codegen_fn_prelude<'tcx>(fx: &mut FunctionCx<'_, '_, 'tcx>, start_
         // not mutated by the current function, this is necessary to support unsized arguments.
         if let ArgKind::Normal(Some(ArgValue { value: val, is_underaligned_pointee: false })) =
             arg_kind
+            && let Some((addr, meta)) = val.try_to_ptr()
         {
-            if let Some((addr, meta)) = val.try_to_ptr() {
-                // Ownership of the value at the backing storage for an argument is passed to the
-                // callee per the ABI, so it is fine to borrow the backing storage of this argument
-                // to prevent a copy.
+            // Ownership of the value at the backing storage for an argument is passed to the
+            // callee per the ABI, so it is fine to borrow the backing storage of this argument
+            // to prevent a copy.
 
-                let place = if let Some(meta) = meta {
-                    CPlace::for_ptr_with_extra(addr, meta, val.layout())
-                } else {
-                    CPlace::for_ptr(addr, val.layout())
-                };
+            let place = if let Some(meta) = meta {
+                CPlace::for_ptr_with_extra(addr, meta, val.layout())
+            } else {
+                CPlace::for_ptr(addr, val.layout())
+            };
 
-                self::comments::add_local_place_comments(fx, place, local);
+            self::comments::add_local_place_comments(fx, place, local);
 
-                assert_eq!(fx.local_map.push(place), local);
-                continue;
-            }
+            assert_eq!(fx.local_map.push(place), local);
+            continue;
         }
 
         let layout = fx.layout_of(ty);

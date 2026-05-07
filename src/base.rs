@@ -1047,7 +1047,7 @@ pub(crate) fn codegen_operand<'tcx>(
         Operand::RuntimeChecks(checks) => {
             let val = checks.value(fx.tcx.sess);
             let layout = fx.layout_of(fx.tcx.types.bool);
-            return CValue::const_val(fx, layout, val.into());
+            CValue::const_val(fx, layout, val.into())
         }
     }
 }
